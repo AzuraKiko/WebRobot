@@ -1,0 +1,78 @@
+*** Settings ***
+Library         SeleniumLibrary
+Resource        ../../Locator/LoginLocator.robot
+Resource        ../../Utils/CommonKeyword.robot
+Resource        ../../Data/Const.robot
+Variables       ../../Data/Env.py
+
+
+*** Keywords ***
+# Page Navigation Keywords
+
+Open Link Page
+    Open Browser    ${URL}    ${Browser}
+    Maximize Browser Window
+    Wait Until Page Contains Element    ${btnX}    ${time}
+
+# Login Action Keywords
+
+Click Login
+    Click To Element    ${btnSignIn}
+
+Input Username And password
+    [Arguments]    ${username}    ${password}
+    Input Text To Element    ${inputUsername}    ${username}
+    Input Text To Element    ${inputPassword}    ${password}
+
+Click SignIn
+    Click To Element    ${btnSignIn2}
+
+# PIN Input Keywords
+
+Input Pin Code
+    [Arguments]    ${pin_number}    ${click_ok}=True
+    FOR    ${i}    IN RANGE    6
+        Click To Element    ${keyBoard${pin_number}}
+    END
+    IF    ${click_ok}    Click To Element    ${btnOk}
+
+Input Pin Code 1
+    Input Pin Code    1
+
+Input Pin Code 1 not button OK
+    Input Pin Code    1    False
+
+Input Wrong Pin Code
+    Click To Element    ${keyBoard1}
+    Click To Element    ${keyBoard2}
+    Click To Element    ${keyBoard1}
+    Click To Element    ${keyBoard2}
+    Click To Element    ${keyBoard2}
+    Click To Element    ${keyBoard1}
+
+# Login Flow Keywords
+
+Login
+    [Arguments]    ${username}    ${password}
+    Open Link Page
+    Click Login
+    Input Username And password    ${username}    ${password}
+    Click SignIn
+
+Login And Input Pin
+    [Arguments]    ${username}    ${password}
+    Login    ${username}    ${password}
+    Input Pin Code 1
+
+# Assertion Keywords
+
+Assert Login Success
+    Verify Element Display    ${verifyUser}
+
+Assert Warning Message Username Password
+    [Arguments]    ${expected1}
+    Verify Text Element    ${messageWarning_1}    ${expected1}
+
+Assert Warning PIN
+    [Arguments]    ${expected2}
+    Verify Text Element    ${messageWarning_2}    ${expected2}

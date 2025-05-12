@@ -1,0 +1,15 @@
+stages:
+  - test
+
+image: python:3.9
+
+before_script:
+  - pip install robotframework
+
+test:
+  stage: test
+  script:
+    - robot --outputdir reports Test/
+  artifacts:
+    paths:
+      - reports/

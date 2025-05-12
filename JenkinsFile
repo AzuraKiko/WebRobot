@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://git.equix.net.au/bus/qa/equix-automation.git'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'robot --outputdir reports Test/'
+            }
+        }
+        stage('Archive Results') {
+            steps {
+                archiveArtifacts artifacts: 'reports/*.html', allowEmptyArchive: true
+            }
+        }
+    }
+    post {
+        always {
+            junit 'reports/*.xml'
+        }
+    }
+}

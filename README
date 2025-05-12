@@ -1,0 +1,21 @@
+🔥 robot --include smoke tests.robot
+🔥 robot -i smoke tests.robot
+#Run TCS have Tags smoke
+
+🔥 robot --test "Test Case 1" --test "Test Case 3" tests.robot
+#Run TCS have name Test Case 1
+
+
+🔥 robot path/test.robot
+#Run all TCs in file test.robot
+
+🔥 pip install -U robotframework-pabot
+#setting pabot run parraline
+
+🔥 pabot --processes 8 [path to tests]
+#run 8 thread
+
+🔥 pabot --testlevelsplit --processes 4 -i <tag_name> [path to tests]
+#run paraline with tags
+
+🔥 pip3 install pyautogui

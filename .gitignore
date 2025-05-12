@@ -1,0 +1,10 @@
+venv/
+log/
+output/
+*.html
+*.xml
+*.png
+results/
+.idea/
+.vscode/
+.venv1/
