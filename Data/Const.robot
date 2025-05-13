@@ -28,3 +28,7 @@ ${symbol}                       BHP
 ${exchangeCXA}                  CXA
 ${exchangeASX}                  ASX
 ${session_name}                 mysession1
+
+# API
+${urlLogin}                      https://dev2-retail-api.equix.app
+

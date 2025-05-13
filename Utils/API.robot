@@ -101,9 +101,3 @@ Get Authentication Token
     ...    ${encryptionKey}
     ${token}=    Get Access Token    ${session}    ${deviceID}    ${refreshToken}    ${env}    ${origin}
     RETURN    ${token}
-
-Format Number
-    [Documentation]    Định dạng số thành chuỗi với 2 chữ số thập phân
-    [Arguments]    ${number}
-    ${formatted}=    Evaluate    "{:.2f}".format(float('${number}')) if '${number}' != '' else '0.00'
-    RETURN    ${formatted}

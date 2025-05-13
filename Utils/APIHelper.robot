@@ -1,5 +1,6 @@
 *** Settings ***
 Library     RequestsLibrary
+Library     JSONLibrary
 Library     Collections
 Library     String
 Library     OperatingSystem
@@ -10,7 +11,8 @@ Library     DateTime
 ${DEFAULT_TIMEOUT}          30
 ${DEFAULT_HEADERS}          {"Content-Type": "application/json", "Accept": "application/json"}
 ${API_SESSION}              ${EMPTY}
-${AUTH_HEADERS}             ${EMPTY}
+# Khởi tạo AUTH_HEADERS là một dictionary trống
+&{AUTH_HEADERS}             &{EMPTY}
 ${sessionEncryptionKey}     ${EMPTY}
 
 
@@ -21,8 +23,7 @@ Initialize API Helper
     ...    headers: Headers mặc định cho request
     ...    timeout: Timeout cho request (giây)
     [Arguments]    ${base_url}=${EMPTY}    ${headers}=${DEFAULT_HEADERS}    ${timeout}=${DEFAULT_TIMEOUT}
-
-    ${headers_dict}=    Evaluate    json.loads(`'''${headers}'''`)    json
+    ${headers_dict}=    Evaluate    json.loads('''${headers}''')    json
     Create Session    api_session    ${base_url}    headers=${headers_dict}    timeout=${timeout}
     Set Suite Variable    ${API_SESSION}    api_session
     Log    API Helper initialized with base URL: ${base_url}    level=INFO
@@ -30,13 +31,14 @@ Initialize API Helper
 Set Auth Token
     [Documentation]    Thêm token xác thực vào headers
     [Arguments]    ${token}
-    ${headers}=    Create Dictionary    Authorization=Bearer ${token}
-    Set Suite Variable    ${AUTH_HEADERS}    ${headers}
+    &{headers}=    Create Dictionary    Authorization=Bearer ${token}
+    Set Suite Variable    &{AUTH_HEADERS}    &{headers}
     Log    Auth token set for API requests    level=INFO
 
 Clear Auth Token
     [Documentation]    Xóa token xác thực khỏi headers
-    Set Suite Variable    ${AUTH_HEADERS}    ${EMPTY}
+    &{empty_dict}=    Create Dictionary
+    Set Suite Variable    &{AUTH_HEADERS}    &{empty_dict}
     Log    Auth token cleared from API requests    level=INFO
 
 Send GET Request
@@ -45,7 +47,6 @@ Send GET Request
     ...    params: Query parameters
     ...    expected_status: Status code mong đợi
     [Arguments]    ${endpoint}    ${params}=${EMPTY}    ${expected_status}=200
-
     ${response}=    GET On Session
     ...    ${API_SESSION}
     ...    ${endpoint}
@@ -70,21 +71,32 @@ Send POST Request
     ...    ${params}=${EMPTY}
     ...    ${expected_status}=200
 
+    # Tạo merged_headers từ AUTH_HEADERS
+    &{merged_headers}=    Copy Dictionary    ${AUTH_HEADERS}
+
+    # Nếu có custom headers, thêm vào merged_headers
     IF    "${headers}" != "${EMPTY}"
-        ${merged_headers}=    Create Dictionary    &{AUTH_HEADERS}    &{headers}
-    ELSE
-        ${merged_headers}=    Set Variable    ${AUTH_HEADERS}
+        Set To Dictionary    ${merged_headers}    &{headers}
     END
 
-    ${response}=    POST On Session
-    ...    ${API_SESSION}
-    ...    ${endpoint}
-    ...    json=${data}
-    ...    params=${params}
-    ...    headers=${merged_headers}
-    ...    expected_status=${expected_status}
-    Log    POST Request: ${endpoint}    level=INFO
-    Log    Response: ${response.text}    level=DEBUG
+    IF    "${data}" != "${EMPTY}"
+        ${response}=    POST On Session
+        ...    ${API_SESSION}
+        ...    ${endpoint}
+        ...    json=${data}
+        ...    params=${params}
+        ...    headers=${merged_headers}
+        ...    expected_status=${expected_status}
+    ELSE
+        ${response}=    POST On Session
+        ...    ${API_SESSION}
+        ...    ${endpoint}
+        ...    params=${params}
+        ...    headers=${merged_headers}
+        ...    expected_status=${expected_status}
+    END
+    Log To Console    POST Request: ${endpoint}    level=INFO
+    Log To Console    Response: ${response.text}    level=DEBUG
     RETURN    ${response}
 
 Send PUT Request
@@ -93,7 +105,6 @@ Send PUT Request
     ...    data: Request body
     ...    expected_status: Status code mong đợi
     [Arguments]    ${endpoint}    ${data}=${EMPTY}    ${expected_status}=200
-
     ${response}=    PUT On Session
     ...    ${API_SESSION}
     ...    ${endpoint}
@@ -110,7 +121,6 @@ Send PATCH Request
     ...    data: Request body
     ...    expected_status: Status code mong đợi
     [Arguments]    ${endpoint}    ${data}=${EMPTY}    ${expected_status}=200
-
     ${response}=    PATCH On Session
     ...    ${API_SESSION}
     ...    ${endpoint}
@@ -126,7 +136,6 @@ Send DELETE Request
     ...    endpoint: URL endpoint
     ...    expected_status: Status code mong đợi
     [Arguments]    ${endpoint}    ${expected_status}=200
-
     ${response}=    DELETE On Session
     ...    ${API_SESSION}
     ...    ${endpoint}
@@ -137,20 +146,20 @@ Send DELETE Request
     RETURN    ${response}
 
 Get Response Value
-    [Documentation]    Lấy giá trị từ response theo JSON path
+    [Documentation]    Lấy giá trị từ response theo JSON path (ví dụ: $.data.key)
     [Arguments]    ${response}    ${json_path}
-    ${value}=    Get From Dictionary    ${response.json()}    ${json_path}
+    ${json_text}=    Convert To String    ${response.text}
+    ${value}=    Get Value From Json    ${json_text}    ${json_path}
     RETURN    ${value}
 
 Get API Data
     [Documentation]    Gọi API và trả về JSON response
     [Arguments]    ${endpoint}    ${params}=${EMPTY}    ${expected_status}=200
-
     ${response}=    Send GET Request
     ...    ${endpoint}
     ...    params=${params}
     ...    expected_status=${expected_status}
-    IF    ${response.status_code} != 200
+    IF    ${response.status_code} != ${expected_status}
         Fail    API call failed with status ${response.status_code}
     END
     RETURN    ${response.json()}
@@ -167,3 +176,9 @@ Verify Response Contains
     ${response_json}=    Set Variable    ${response.json()}
     Dictionary Should Contain Item    ${response_json}    ${key}    ${value}
     Log    Response contains expected content    level=INFO
+
+Format Number
+    [Documentation]    Định dạng số thành chuỗi với 2 chữ số thập phân
+    [Arguments]    ${number}
+    ${formatted}=    Evaluate    "{:.2f}".format(float('${number}')) if '${number}' != '' else '0.00'
+    RETURN    ${formatted}

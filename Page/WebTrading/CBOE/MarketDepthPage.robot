@@ -2,7 +2,8 @@
 Library     SeleniumLibrary
 Resource    ../../../Locator/OrderLocator.robot
 Resource    ../../../Utils/CommonKeyword.robot
-Resource    ../../../Utils/API.robot
+Resource    ../../../Utils/APIHelper.robot
+Resource     ../../../Data/Const.robot
 
 
 *** Variables ***
@@ -68,7 +69,6 @@ Clean Percent String
     ${formatted}=    Format Number    ${cleaned}
     RETURN    ${formatted}
 
-
 Get Delayed Price Data
     [Documentation]    Lấy dữ liệu giá delayed từ API
     [Arguments]    ${exchange}    ${symbol}    ${token}
@@ -98,8 +98,8 @@ Get Web Price Data
 
 Update User Market Data
     [Documentation]    Cập nhật quyền truy cập market data cho user
-    [Arguments]    ${market_data_type}    ${status}    ${token}
-    ${header}=    Setup API Session    ${token}
+    [Arguments]    ${user_id}    ${market_data_type}    ${status}    ${token}
+    Set Auth Token    ${token}
     ${exchange_item1}=    Create Dictionary
     ...    exchange=${exchangeASX}
     ...    market_data_type=${market_data_type}
@@ -109,9 +109,7 @@ Update User Market Data
     ...    market_data_type=${market_data_type}
     ...    status=${status}
     ${exchange_list}=    Create List    ${exchange_item1}    ${exchange_item2}
-    ${user_data}=    Create Dictionary    user_id=${userID}    exchange_access=${exchange_list}
+    ${user_data}=    Create Dictionary    user_id=${user_id}    exchange_access=${exchange_list}
     ${body}=    Create List    ${user_data}
-    ${response}=    PUT On Session    ${session_name}    url=/user/market-data    json=${body}    headers=${header}
+    ${response}=    Send PUT Request    /user/market-data    ${body}
     RETURN    ${response}
-
-
