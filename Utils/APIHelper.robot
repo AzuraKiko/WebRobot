@@ -188,8 +188,5 @@ Format Number
     RETURN    ${formatted}
 
 Compare Float Values
-    [Arguments]    ${actual}    ${expected}    ${tolerance}=0.00    ${msg}=Value mismatch
-    ${actual_float}=    Convert To Number    ${actual}
-    ${expected_float}=    Convert To Number    ${expected}
-    ${diff}=    Evaluate    abs(${actual_float} - ${expected_float})
-    Should Be True    ${diff} <= ${tolerance}    msg=${msg}
+    [Arguments]    ${actual}    ${expected}    ${msg}=Value mismatch
+    Should Be True    ${actual} == ${expected}    msg=${msg}

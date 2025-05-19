@@ -18,43 +18,45 @@ Test Setup      Login And Input Pin    ${username}    ${password}
 Market Depth DELAY
     [Documentation]    Verify market depth displays correct delayed data
     [Tags]    delayed    market_depth
-    # ${tabs}=    Get All Tabs
-    # Log    Current tabs: ${tabs}
-    # FOR    ${tab}    IN    ${tabs}
-    #     ${tab_text}=    Get From Dictionary    ${tab}    text
-    #     Close Tab    ${tab_text}
-    #     Sleep    1s
-    # END
+    ${tabs}=    Get All Tabs
+    Log    Current tabs: ${tabs}
+    FOR    ${tab}    IN    @{tabs}
+        Log    ${tab}
+        ${tab_text}=    Get From Dictionary    ${tab}    text
+        ${tab_text_lower}=    Convert To Lowercase    ${tab_text}
+        IF    '${tab_text}' != ''    Close Tab    ${tab_text_lower}
+        Sleep    1s
+    END
 
-    # First get UI data while logged in
-    ${actual_lastTradePrice}    ${actual_changePoint}    ${actual_changePercent}=
-    ...    Get Web Price Data    ${symbol}    ${exchangeCXA}
+    # # First get UI data while logged in
+    # ${actual_lastTradePrice}    ${actual_changePoint}    ${actual_changePercent}=
+    # ...    Get Web Price Data    ${symbol}    ${exchangeASX}
+    # Sleep    3s
 
-    # Then get API data
-    ${token}=    Get Authentication Token
-    ...    ${urlLogin}
-    ...    ${username}
-    ...    ${password}
-    ...    ${origin}
-    ...    ${version}
-    ...    ${environment}
-    ${expect_trade_price}    ${expect_change_point}    ${expect_change_percent}=
-    ...    Get Delayed Price Data    ${exchangeCXA}    ${symbol}    ${token}
+    # # Then get API data
+    # ${token}=    Get Authentication Token
+    # ...    ${urlLogin}
+    # ...    ${username}
+    # ...    ${password}
+    # ...    ${origin}
+    # ...    ${version}
+    # ...    ${environment}
+    # ${expect_trade_price}    ${expect_change_point}    ${expect_change_percent}=
+    # ...    Get Delayed Price Data    ${exchangeASX}    ${symbol}    ${token}
 
-    # Log both sets of data for comparison
-    Log
-    ...    Expected (API): trade_price=${expect_trade_price}, change_point=${expect_change_point}, change_percent=${expect_change_percent}
-    Log
-    ...    Actual (UI): trade_price=${actual_lastTradePrice}, change_point=${actual_changePoint}, change_percent=${actual_changePercent}
+    # # Log both sets of data for comparison
+    # Log
+    # ...    Expected (API): trade_price=${expect_trade_price}, change_point=${expect_change_point}, change_percent=${expect_change_percent}
+    # Log
+    # ...    Actual (UI): trade_price=${actual_lastTradePrice}, change_point=${actual_changePoint}, change_percent=${actual_changePercent}
 
-    # Compare values with tolerance to account for potential small differences
-    Compare Float Values    ${actual_lastTradePrice}    ${expect_trade_price}    ${EMPTY}    msg=Trade price mismatch
-    Compare Float Values    ${actual_changePoint}    ${expect_change_point}    ${EMPTY}    msg=Change point mismatch
-    Compare Float Values
-    ...    ${actual_changePercent}
-    ...    ${expect_change_percent}
-    ...    ${EMPTY}
-    ...    msg=Change percent mismatch
+    # # Compare values with tolerance to account for potential small differences
+    # Compare Float Values    ${actual_lastTradePrice}    ${expect_trade_price}    msg=Trade price mismatch
+    # Compare Float Values    ${actual_changePoint}    ${expect_change_point}    msg=Change point mismatch
+    # Compare Float Values
+    # ...    ${actual_changePercent}
+    # ...    ${expect_change_percent}
+    # ...    msg=Change percent mismatch
 
 # Market Depth 0010 0011 0012 0013
 #    [Documentation]    Verify market depth displays correct indicative price

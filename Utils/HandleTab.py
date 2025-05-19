@@ -60,12 +60,24 @@ class HandleTab:
 
     def close_tab(self, tab_text):
         """Closes a tab with the specified text.
+
         Args:
             tab_text (str): The text content of the tab to close.
         """
         try:
-            tab = self.selenium.find_element(f"//li[contains(@class, 'lm_tab') and contains(., '{tab_text}')]")
-            close_button = self.selenium.find_element(".lm_close_tab", parent=tab)
+            # Tìm tab với text được chỉ định
+            tab_xpath = f"//li[contains(@class, 'lm_tab') and contains(., '{tab_text}')]"
+            tab = self.selenium.find_element(tab_xpath)
+
+            # Hover vào tab để hiển thị nút đóng
+            self.selenium.mouse_over(tab)
+
+            # Đợi cho nút đóng hiển thị sau khi hover
+            close_button_xpath = f"{tab_xpath}//div[contains(@class, 'lm_close_tab')]"
+            self.selenium.wait_until_element_is_visible(close_button_xpath, timeout=2)
+
+            # Tìm và click vào nút đóng
+            close_button = self.selenium.find_element(close_button_xpath)
             self.selenium.click_element(close_button)
         except Exception as e:
             self.logger.error(f'Error closing tab "{tab_text}": {str(e)}')
