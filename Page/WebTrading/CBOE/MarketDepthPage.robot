@@ -3,7 +3,7 @@ Library     SeleniumLibrary
 Resource    ../../../Locator/OrderLocator.robot
 Resource    ../../../Utils/CommonKeyword.robot
 Resource    ../../../Utils/APIHelper.robot
-Resource     ../../../Data/Const.robot
+Resource    ../../../Data/Const.robot
 
 
 *** Variables ***
@@ -28,6 +28,8 @@ ${container2}                   (//div[@class="container"])[2]
 ${canvas_bid}                   (//canvas[@class="hypergrid"])[1]
 ${canvas_ask}                   (//canvas[@class="hypergrid"])[2]
 ${inputSearch}                  //input[contains(@id,'searchBoxSelector')]
+${suggestSearch}                (//div[contains(@class,'searchSuggest')])[1]
+${firstSearch}                  (//div[contains(@class,'itemSuggestSymbol')])[1]
 ${modalOrder}                   //div[@class='windowHeader']
 
 
@@ -52,11 +54,15 @@ Open advance market depth
     Hover To Element    ${leftTradingMenu}
     Click To Element    ${menuAdvanceMarketDepth}
 
-Input symbol
-    [Arguments]    ${symbol}
-    Click To Element    ${inputSymbol}
-    Input Text To Element    ${inputSymbol}    ${symbol}
-    Click To Element    ${suggestSymbol}
+Search Symbol
+    [Arguments]    ${symbolSearch}    ${inputSearch}    ${name_tab}
+    Input Text To Element On Widget    ${inputSearch}    ${symbolSearch}    ${name_tab}
+
+Select Symbol
+    [Arguments]    ${suggestSearch}    ${firstSearch}
+    Wait Until Element Is Visible    ${suggestSearch}    ${time}
+    Sleep    2s
+    Click To Element    ${firstSearch}
 
 Verify symbol and exchange display
     [Arguments]    ${symbol}
@@ -72,7 +78,8 @@ Clean Percent String
 Get Delayed Price Data
     [Documentation]    Lấy dữ liệu giá delayed từ API
     [Arguments]    ${exchange}    ${symbol}    ${token}
-    ${json_response}=    Get API Data    /feed-delayed-snapshot-aio/price/${exchange}/${symbol}    ${token}
+    Set Auth Token    ${token}
+    ${json_response}=    Get API Data    /feed-delayed-snapshot-aio/price/${exchange}/${symbol}
     ${trade_price}=    Get From Dictionary    ${json_response[0]['quote']}    trade_price
     ${change_point}=    Get From Dictionary    ${json_response[0]['quote']}    change_point
     ${change_percent}=    Get From Dictionary    ${json_response[0]['quote']}    change_percent
@@ -85,9 +92,11 @@ Get Web Price Data
     [Documentation]    Lấy dữ liệu giá từ giao diện web
     [Arguments]    ${symbol}    ${exchange}
     Open Market Depth
-    Input Symbol    ${symbol}.${exchange}
+    Search Symbol    ${symbol}.${exchange}    ${inputSearch}    Market Depth
+    Select Symbol    ${suggestSearch}    ${firstSearch}
     Verify Symbol And Exchange Display    ${symbol}.${exchange}
     Wait Until Element Is Visible    ${lastTradePrice}    timeout=10s
+    Sleep    2s
     ${lastTradePriceWeb}=    Get Element Text By JS    ${lastTradePrice}
     ${changePointWeb}=    Get Element Text By JS    ${lastChangePoint}
     ${lastChangePercentWeb}=    Get Element Text By JS    ${lastChangePercent}

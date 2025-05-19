@@ -1,6 +1,5 @@
 *** Settings ***
 Library     RequestsLibrary
-Library     JSONLibrary
 Library     Collections
 Library     String
 Library     OperatingSystem
@@ -146,10 +145,14 @@ Send DELETE Request
     RETURN    ${response}
 
 Get Response Value
-    [Documentation]    Lấy giá trị từ response theo JSON path (ví dụ: $.data.key)
     [Arguments]    ${response}    ${json_path}
-    ${json_text}=    Convert To String    ${response.text}
-    ${value}=    Get Value From Json    ${json_text}    ${json_path}
+    ${dict}=    Evaluate    json.loads($response.text)    modules=json
+    ${json_path}=    Replace String    ${json_path}    $.    ${EMPTY}
+    ${parts}=    Split String    ${json_path}    .
+    ${value}=    Set Variable    ${dict}
+    FOR    ${part}    IN    @{parts}
+        ${value}=    Evaluate    $value[$part]
+    END
     RETURN    ${value}
 
 Get API Data
@@ -180,5 +183,13 @@ Verify Response Contains
 Format Number
     [Documentation]    Định dạng số thành chuỗi với 2 chữ số thập phân
     [Arguments]    ${number}
-    ${formatted}=    Evaluate    "{:.2f}".format(float('${number}')) if '${number}' != '' else '0.00'
+    ${formatted}=    Evaluate
+    ...    "{:.2f}".format(float('${number}')) if '${number}' not in ['', '--'] else '0.00'
     RETURN    ${formatted}
+
+Compare Float Values
+    [Arguments]    ${actual}    ${expected}    ${tolerance}=0.00    ${msg}=Value mismatch
+    ${actual_float}=    Convert To Number    ${actual}
+    ${expected_float}=    Convert To Number    ${expected}
+    ${diff}=    Evaluate    abs(${actual_float} - ${expected_float})
+    Should Be True    ${diff} <= ${tolerance}    msg=${msg}

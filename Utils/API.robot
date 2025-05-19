@@ -7,7 +7,6 @@ Library         Collections
 Library         JSONSchemaLibrary
 Library         OperatingSystem
 Library         Crypto.py
-Library         JSONLibrary
 Resource        APIHelper.robot
 Variables       ../data/Env.py
 
@@ -44,7 +43,7 @@ Login And Get Refresh Token
     ...    username=${username}
     ...    password=${encrypted_Password}
     ...    provider=paritech
-    ...    storage_token=true
+    ...    storage_token=${TRUE}
     ...    session_id=${sessionId}
     ${body}=    Create Dictionary    data=${data}
     ${response}=    Send POST Request    /auth    data=${body}    headers=${header}
@@ -60,9 +59,8 @@ Decode Refresh Token
     ...    ${env}
     ...    ${origin}
     ...    ${encryptionKey}
-    ${encrypted_Pin}=    encrypt    ${pin}    ${encryptionKey}
     ${header}=    Create Dictionary    Environment=${env}    origin=${origin}
-    ${data}=    Create Dictionary    token=${encryptedRefreshToken}    pin=${encrypted_Pin}
+    ${data}=    Create Dictionary    token=${encryptedRefreshToken}    pin=${pin}
     ${body}=    Create Dictionary    data=${data}
     ${response}=    Send POST Request    /auth/decode    data=${body}    headers=${header}
     ${refreshToken}=    Get Response Value    ${response}    token
@@ -75,7 +73,8 @@ Get Access Token
     ${body}=    Create Dictionary    data=${data}
     ${response}=    Send POST Request    /auth/refresh    data=${body}    headers=${header}
     ${token_data}=    Get Response Value    ${response}    accessToken
-    ${token}=    Set Variable    Bearer ${token_data}
+    # ${token}=    Set Variable    Bearer ${token_data}
+    ${token}=    Set Variable    ${token_data}
     RETURN    ${token}
 
 Get Authentication Token

@@ -72,7 +72,7 @@ ${canvas}                                   //div[3]/div/div/canvas
 ${accountID}                                (//div[text()='account id'])[1]/following-sibling::div
 ${side}                                     (//div[text()='side'])[1]/following-sibling::div
 ${orderType}                                (//div[text()='order type'])[1]/following-sibling::div
-${symbol}                                   (//div[text()='symbol'])[1]/following-sibling::div
+# ${symbol}                                   (//div[text()='symbol'])[1]/following-sibling::div
 ${security}                                 (//div[text()='security'])[1]/following-sibling::div
 ${quantity}                                 (//div[text()='quantity'])[1]/following-sibling::div
 ${limitPrice}                               (//div[text()='limit price'])[1]/following-sibling::div

@@ -7,7 +7,6 @@ Resource    ../../../Utils/API.robot
 Resource    ../../../Page/LoginAdminPortalPage.robot
 Resource    ../../../Page/WebTrading/CBOE/OrderLimitPage.robot
 Library     JSONSchemaLibrary
-Library     JSONLibrary
 Library     ../../../Utils/Common.py
 Library     OperatingSystem
 Library     Collections

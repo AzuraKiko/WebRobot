@@ -25,6 +25,7 @@ ${logo}                 //div[@class='headerRoot']//img[@class='logoWebsite']
 ${verifyUser}           //div[@class='headerRight']//div[text()='settings']/following-sibling::div/child::div[1]
 ${btnOK}                //span[contains(text(),'ok')]
 ${btnX}                 //li[@class='lm_close']
+${acceptTerms}          //span[text()='i accept']
 
 # Message Locators
 ${messageWarning_1}     //div[contains(text(),'Incorrect Password or User Login. Please make sure your details are correct and try again')]

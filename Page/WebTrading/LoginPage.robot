@@ -30,11 +30,13 @@ Click SignIn
 # PIN Input Keywords
 
 Input Pin Code
-    [Arguments]    ${pin_number}    ${click_ok}=True
+    [Arguments]    ${pin_number}    ${click_ok}=True    ${click_accept_terms}=True
     FOR    ${i}    IN RANGE    6
         Click To Element    ${keyBoard${pin_number}}
     END
     IF    ${click_ok}    Click To Element    ${btnOk}
+    Sleep    3s
+    IF    ${click_accept_terms}    Click To Element    ${acceptTerms}
 
 Input Pin Code 1
     Input Pin Code    1

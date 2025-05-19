@@ -1,7 +1,6 @@
 *** Settings ***
 Library     SeleniumLibrary
 Library     RequestsLibrary
-Library     JSONLibrary
 Library     Collections
 Resource    ../../../Utils/API.robot
 Resource    ../../../Page/WebTrading/OrderPage.robot

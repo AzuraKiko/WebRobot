@@ -1,10 +1,10 @@
 *** Settings ***
-Library         SeleniumLibrary
-Library         Collections
-Library         XML
-Library         String
-Library         OperatingSystem
-# Variables       ${CURDIR}${/}..${/}data${/}Env.py
+Library     SeleniumLibrary
+Library     Collections
+Library     XML
+Library     String
+Library     OperatingSystem
+# Variables    ${CURDIR}${/}..${/}data${/}Env.py
 
 
 *** Variables ***
@@ -25,6 +25,14 @@ Click To Element
     Wait Until Element Is Enabled    ${locator}    ${time}
     Scroll To Element By JS    ${locator}
     Click Element    ${locator}
+
+Click To Element On Widget
+    [Arguments]    ${locator}    ${name_tab}
+    ${panel_xpath}=    Get Active Widget By Name    ${name_tab}
+    ${element_xpath}=    Catenate    SEPARATOR=    ${panel_xpath}    ${locator}
+    Wait Until Element Is Visible    ${element_xpath}    ${time}
+    Wait Until Element Is Enabled    ${element_xpath}    ${time}
+    Click Element    ${element_xpath}
 
 Click To Coordinate
     [Documentation]    Clicks at specific coordinates on an element
@@ -64,6 +72,24 @@ Input Text To Element
     IF    '${current_value}' == '' and ${is_enabled}
         Input Text    ${locator}    ${text}
     END
+
+Input Text To Element On Widget
+    [Documentation]    Inputs text to an element within a specific widget panel if it's empty and enabled
+    [Arguments]    ${locator}    ${text}    ${name_tab}
+    ${panel_xpath}=    Get Active Widget By Name    ${name_tab}
+    ${element_xpath}=    Catenate    SEPARATOR=    ${panel_xpath}    ${locator}
+    Wait Until Element Is Visible    ${element_xpath}    ${time}
+    Wait Until Element Is Enabled    ${element_xpath}    ${time}
+    Click Element    ${element_xpath}
+    Clear Element Text    ${element_xpath}
+    Input Text    ${element_xpath}    ${text}
+    # ${current_value}=    Get Value    ${element_xpath}
+    # IF    '${current_value}' == ''
+    #    Input Text    ${element_xpath}    ${text}
+    # ELSE
+    #    Clear Element Text    ${element_xpath}
+    #    Input Text    ${element_xpath}    ${text}
+    # END
 
 Clear And Input Text To Element
     [Documentation]    Clears existing text and inputs new text
@@ -165,21 +191,21 @@ Get List Values From Dropdown
     [Documentation]    Gets all values from a dropdown list
     [Arguments]    ${dropdown_locator}    ${options_locator}
     Wait Until Element Is Visible    ${dropdown_locator}    ${time}
-    Scroll To Element By JS   ${dropdown_locator}
+    Scroll To Element By JS    ${dropdown_locator}
     Click Element    ${dropdown_locator}
     Wait Until Element Is Visible    ${options_locator}    ${time}
-    
+
     ${options}=    Get WebElements    ${options_locator}
     ${count}=    Get Length    ${options}
     IF    ${count} == 0    Fail    Dropdown is empty!
-    
+
     ${list_values}=    Create List
     FOR    ${option}    IN    @{options}
         ${value}=    Get Text    ${option}
         ${value}=    Strip String    ${value}
         Append To List    ${list_values}    ${value}
     END
-    
+
     RETURN    ${list_values}
 
 # ===== Verification Keywords =====
@@ -328,3 +354,27 @@ Get Element Count
     ${elements}=    Get WebElements    ${locator}
     ${count}=    Get Length    ${elements}
     RETURN    ${count}
+
+# ===== Drag And Drop Keywords =====
+
+Drag And Drop By Offset
+    [Documentation]    Drags and drops an element by offset
+    [Arguments]    ${locator}    ${x}    ${y}
+    Wait Until Element Is Visible    ${locator}    ${time}
+    Drag And Drop By Offset    ${locator}    ${x}    ${y}
+
+Drag And Drop To Element
+    [Documentation]    Drags and drops an element to another element
+    [Arguments]    ${source}    ${target}
+    Wait Until Element Is Visible    ${source}    ${time}
+    Wait Until Element Is Visible    ${target}    ${time}
+    Drag And Drop    ${source}    ${target}
+
+# ===== Get Active Widget =====
+
+Get Active Widget By Name
+    [Arguments]    ${name_tab}
+    ${tab_xpath}=    Set Variable
+    ...    //li[contains(@class, "lm_tab") and contains(@class, "lm_active") and contains(normalize-space(), "${name_tab}")]
+    ${panel_xpath}=    Set Variable    ${tab_xpath}/ancestor::div[@class="lm_item lm_stack"]
+    RETURN    ${panel_xpath}
