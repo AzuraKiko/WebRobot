@@ -23,8 +23,7 @@ ${checkbox2}                    (//span[text()='I have read and agree to the'])[
 ${getAccess1}                   (//div[text()='get access now'])[2]
 ${getAccess2}                   (//div[text()='get access now'])[1]
 
-${container1}                   (//div[@class="container"])[1]
-${container2}                   (//div[@class="container"])[2]
+${container}                    (//div[@class="container"])[1]
 ${canvas_bid}                   (//canvas[@class="hypergrid"])[1]
 ${canvas_ask}                   (//canvas[@class="hypergrid"])[2]
 ${inputSearch}                  //input[contains(@id,'searchBoxSelector')]
@@ -35,12 +34,12 @@ ${modalOrder}                   //div[@class='windowHeader']
 
 *** Keywords ***
 Check access 1
-    SeleniumLibrary.Drag And Drop By Offset    (//div[@class="container"]//div[@class="__vertical"])[2]    0    300
-    Click Element    ${checkbox1}
+    Drag And Drop By Offset Custom    (//div[@class="container"]//div[@class="__vertical"])[2]    0    300
+    Click To Element    ${checkbox1}
     Click To Element    ${getAccess1}
 
 Check access 2
-    SeleniumLibrary.Drag And Drop By Offset    (//div[@class="container"]//div[@class="__vertical"])[1]    0    300
+    Drag And Drop By Offset Custom    (//div[@class="container"]//div[@class="__vertical"])[1]    0    300
     Click To Element    ${checkbox2}
     Click To Element    ${getAccess2}
 
@@ -109,14 +108,16 @@ Update User Market Data
     [Documentation]    Cập nhật quyền truy cập market data cho user
     [Arguments]    ${user_id}    ${market_data_type}    ${status}    ${token}
     Set Auth Token    ${token}
+    ${market_data_type_int}=    Convert To Integer    ${market_data_type}
+    ${status_int}=    Convert To Integer    ${status}
     ${exchange_item1}=    Create Dictionary
     ...    exchange=${exchangeASX}
-    ...    market_data_type=${market_data_type}
-    ...    status=${status}
+    ...    market_data_type=${market_data_type_int}
+    ...    status=${status_int}
     ${exchange_item2}=    Create Dictionary
     ...    exchange=${exchangeCXA}
-    ...    market_data_type=${market_data_type}
-    ...    status=${status}
+    ...    market_data_type=${market_data_type_int}
+    ...    status=${status_int}
     ${exchange_list}=    Create List    ${exchange_item1}    ${exchange_item2}
     ${user_data}=    Create Dictionary    user_id=${user_id}    exchange_access=${exchange_list}
     ${body}=    Create List    ${user_data}

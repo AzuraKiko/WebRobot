@@ -1,8 +1,7 @@
 *** Settings ***
 Library             SeleniumLibrary
-Resource            ../../Page/WebTrading/LoginPage.robot
+Resource            ../../Page/WebTrading/Pentest/LoginPage.robot
 Resource            ../../Utils/RandomData.robot
-
 Test Teardown       Close All Browsers
 
 

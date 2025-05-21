@@ -357,11 +357,11 @@ Get Element Count
 
 # ===== Drag And Drop Keywords =====
 
-Drag And Drop By Offset
+Drag And Drop By Offset Custom
     [Documentation]    Drags and drops an element by offset
     [Arguments]    ${locator}    ${x}    ${y}
     Wait Until Element Is Visible    ${locator}    ${time}
-    Drag And Drop By Offset    ${locator}    ${x}    ${y}
+    SeleniumLibrary.Drag And Drop By Offset    ${locator}    ${x}    ${y}
 
 Drag And Drop To Element
     [Documentation]    Drags and drops an element to another element
