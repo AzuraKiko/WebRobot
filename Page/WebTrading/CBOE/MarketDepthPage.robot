@@ -30,6 +30,7 @@ ${inputSearch}                  //input[contains(@id,'searchBoxSelector')]
 ${suggestSearch}                (//div[contains(@class,'searchSuggest')])[1]
 ${firstSearch}                  (//div[contains(@class,'itemSuggestSymbol')])[1]
 ${modalOrder}                   //div[@class='windowHeader']
+${errorMessage}                 //div[contains(@class,'emptyListSuggest')]
 
 
 *** Keywords ***
@@ -123,3 +124,13 @@ Update User Market Data
     ${body}=    Create List    ${user_data}
     ${response}=    Send PUT Request    /user/market-data    ${body}
     RETURN    ${response}
+
+Calculate Total Depth
+    [Arguments]    ${size_depth}
+    ${total}=    Set Variable    0
+    FOR    ${key}    IN    @{size_depth.keys()}
+        ${entry}=    Get From Dictionary    ${size_depth}    ${key}
+        ${quantity}=    Get From Dictionary    ${entry}    quantity
+        ${total}=    Evaluate    ${total} + ${quantity}
+    END
+    RETURN    ${total}

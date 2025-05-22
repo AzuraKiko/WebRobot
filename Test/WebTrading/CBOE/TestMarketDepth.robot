@@ -71,66 +71,69 @@ Market Depth No Access
     Check access 1
     Check access 2
 
-Market Depth Order Bid/Ask
+Market Depth Sort Bid/Ask
     [Documentation]    Verify bid/ask price ordering in market depth
     [Tags]    bid_ask    market_depth
-    # Login And Close All Tabs    ${username}    ${password}
-    # Open Market Depth
-    # Search Symbol    ${symbol}.${exchangeASX}    ${inputSearch}    Market Depth
-    # Select Symbol    ${suggestSearch}    ${firstSearch}
-    # Verify Symbol And Exchange Display    ${symbol}.${exchangeASX}
-    # Sleep    2s
-    # Capture Element Screenshot    ${container}    ${EXECDIR}/Data/MarketDepth.png
-    # Sleep    2s
-    # Extract Text To Csv    ${EXECDIR}/Data/MarketDepth.png    ${EXECDIR}/Data/MarketDepth.csv
+    Login And Close All Tabs    ${username}    ${password}
+    Open Market Depth
+    Search Symbol    ${symbol}.${exchangeASX}    ${inputSearch}    Market Depth
+    Select Symbol    ${suggestSearch}    ${firstSearch}
+    Verify Symbol And Exchange Display    ${symbol}.${exchangeASX}
+    Sleep    2s
+    Capture Element Screenshot    ${container}    ${EXECDIR}/Data/MarketDepth.png
+    Sleep    2s
     Fade Red Green Opacity
     ...    ${EXECDIR}/Data/MarketDepth.png
-    ...    ${EXECDIR}/Data/processed4.png
+    ...    ${EXECDIR}/Data/OpacityDepth.png
     Remove Red Green And Replace Color
-    ...    ${EXECDIR}/Data/processed4.png
-    ...    ${EXECDIR}/Data/processed5.png    10    (48, 32, 28)
+    ...    ${EXECDIR}/Data/OpacityDepth.png
+    ...    ${EXECDIR}/Data/RemoveColorDepth.png    20    (48, 32, 28)
     Preprocess For Ocr
-    ...    ${EXECDIR}/Data/processed5.png
-    ...    ${EXECDIR}/Data/processed7.png
+    ...    ${EXECDIR}/Data/RemoveColorDepth.png
+    ...    ${EXECDIR}/Data/ProcessDepth.png
 
-    Extract Text To Csv    ${EXECDIR}/Data/processed8.png    ${EXECDIR}/Data/MarketDepth.csv
+    Extract Text To Csv    ${EXECDIR}/Data/ProcessDepth.png    ${EXECDIR}/Data/MarketDepth.csv
+    ${line}=    Count Lines In Csv    ${EXECDIR}/Data/MarketDepth.csv
+    Log    ${line}
+    Should Be True    ${line}<=10    Số dòng phải nhỏ hơn hoặc bằng 10!
 
-    # ${token}=    Get Authentication Token
-    # ...    ${apiUrl}
-    # ...    ${username}
-    # ...    ${password}
-    # ...    ${origin}
-    # ...    ${version}
-    # ...    ${environment}
-    # ${json_response}=    Get API Data    /feed-snapshot-aio/price/${exchangeASX}/${symbol}    ${token}
-    # ${bids}=    Get From Dictionary    ${json_response[0]['depth']}    bid
-    # ${asks}=    Get From Dictionary    ${json_response[0]['depth']}    ask
-    # ${is_decreasing}=    Is Price Decreasing    ${bids}
-    # ${is_increasing}=    Is Price Increasing    ${asks}
-    # Should Be Equal    ${is_decreasing}    True    msg=Bid prices are not decreasing
-    # Should Be Equal    ${is_increasing}    True    msg=Ask prices are not increasing
-    # ${line_count}=    Count Lines In Csv    Data/data.csv
-    # Should Be True    ${line_count} <= 10    msg=CSV file has more than 10 lines
+    ${token}=    Get Authentication Token
+    ...    ${urlLogin}
+    ...    ${username}
+    ...    ${password}
+    ...    ${origin}
+    ...    ${version}
+    ...    ${environment}
 
-# Market Depth 0041 0042 0043 - Invalid Symbol
-#    [Documentation]    Verify market depth behavior with invalid symbol
-#    [Tags]    invalid_symbol    market_depth
-#    Open Market Depth
-#    Input Symbol    INVALID.${exchangeCXA}
-#    Wait Until Element Is Visible    ${errorMessage}    timeout=5s
-#    ${error_text}=    Get Element Text By JS    ${errorMessage}
-#    Should Be Equal    ${error_text}    Invalid symbol    msg=Invalid symbol error message mismatch
+    Set Auth Token    ${token}
+    ${json_response}=    Get API Data
+    ...    /feed-snapshot-aio/price/${exchangeASX}/${symbol}
+    ${has_depth}=    Evaluate    'depth' in ${json_response}
+    IF    ${has_depth}
+        ${bids}=    Get From Dictionary    ${json_response[0]['depth']}    bid
+        ${asks}=    Get From Dictionary    ${json_response[0]['depth']}    ask
+        IF    ${bids}!= {}
+            ${sortBid}=    Is Price Decreasing    ${bids}
+            Should Be True    ${sortBid}    Bids are not in decreasing order
+        END
+        IF    ${asks}!= {}
+            ${sortAsk}=    Is Price Increasing    ${asks}
+            Should Be True    ${sortAsk}    Asks are not in increasing order
+        END
+    ELSE
+        Log    Depth is empty
+    END
 
-# Market Depth 0044 0045 0046 - Network Error
-#    [Documentation]    Verify market depth behavior during network errors
-#    [Tags]    network_error    market_depth
-#    Open Market Depth
-#    Input Symbol    ${symbol}.${exchangeCXA}
-#    ${token}=    Get token web trading    ${apiUrl}    ${username}    ${password}    ${origin}    ${version}    ${environment}
-#    ${json_response}=    Get API Data
-#    ...    /feed-snapshot-aio/price/${exchangeCXA}/${symbol}
-#    ...    ${token}
-#    ...    expected_status=500
-#    Wait Until Element Is Visible    ${errorMessage}    timeout=5s
-#    ${error_text}=    Get Element Text By JS    ${errorMessage}
-#    Should Be Equal    ${error_text}    Network error occurred    msg=Network error message mismatch
+Market Depth Invalid Symbol
+    [Documentation]    Verify market depth behavior with invalid symbol
+    [Tags]    invalid_symbol    market_depth
+    Login And Close All Tabs    ${username}    ${password}
+    Open Market Depth
+    Search Symbol    INVALID.${exchangeASX}    ${inputSearch}    Market Depth
+    Wait Until Element Is Visible    ${suggestSearch}    ${time}
+    Wait Until Element Is Visible    ${errorMessage}    ${time}
+    ${error_text}=    Get Element Text By JS    ${errorMessage}
+    Should Be Equal    ${error_text}    No Data    msg=Invalid symbol error message mismatch
+
+Handle Image
+    Extract Text To Csv    ${EXECDIR}/Data/ProcessDepth.png    ${EXECDIR}/Data/MarketDepth.csv

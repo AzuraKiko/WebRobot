@@ -1,5 +1,5 @@
 WL = "EQ"
-ENV = "DEV"  # DEV, UAT, PROD
+ENV = "UAT"  # DEV, UAT, PROD
 
 configs = {
     "EQ_DEV": {
@@ -91,3 +91,5 @@ pin = config["pin"]
 originAdminPortal = config["originAdminPortal"]
 environment = config["environment"]
 userID = config["userID"]
+
+API_BASE_URL = "http://localhost:8080/api"
