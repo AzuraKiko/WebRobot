@@ -8,12 +8,13 @@ Library     OperatingSystem
 
 
 *** Variables ***
-${time}                     30
-${BackSpace}                BACKSPACE
-${CtrA}                     CTRL+A
-${Delete}                   DELETE
-${TC_INDEX}                 0
-${popup_Confirm_Bound}      //div[contains(@class, 'popup-confirm')]
+${time}                         30
+${BackSpace}                    BACKSPACE
+${CtrA}                         CTRL+A
+${Delete}                       DELETE
+${TC_INDEX}                     0
+${popup_Confirm_Bound}          //div[contains(@class, 'confirmBound')]
+${popup_Confirm_Bound_OK}       //div[contains(@class, "confirmBtnRoot")]//div[contains(@class, "btn") and .//span[normalize-space(text())="ok"]]
 
 
 *** Keywords ***
@@ -218,10 +219,16 @@ Verify Text Element
     SeleniumLibrary.Element Text Should Be    ${locator}    ${expect}
 
 Verify Text Placeholder
-    [Documentation]    Verifies placeholder text of an element
     [Arguments]    ${locator}    ${textExpected}
     Wait Until Element Is Visible    ${locator}    ${time}
     ${textActual}=    SeleniumLibrary.Get Element Attribute    ${locator}    placeholder
+    IF    '${textActual}' == 'None'
+        ${textActual}=    Get Text    ${locator}
+        Log    ${textActual}
+        IF    '${textActual}' == 'None'
+            Fail    Cannot get placeholder or text for element: ${locator}
+        END
+    END
     ${textActual}=    Strip String    ${textActual}
     Should Be Equal    ${textExpected}    ${textActual}
 
@@ -261,6 +268,12 @@ Verify Element Display
     [Arguments]    ${locator}
     Wait Until Element Is Visible    ${locator}    ${time}
     Element Should Be Visible    ${locator}
+
+Verify Element Not Display
+    [Documentation]    Verifies if an element is not displayed
+    [Arguments]    ${locator}
+    Wait Until Element Is Not Visible    ${locator}    ${time}
+    Element Should Not Be Visible    ${locator}
 
 Verify Message Confirm Bound
     [Documentation]    Verifies confirmation popup message

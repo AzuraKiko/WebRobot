@@ -8,6 +8,7 @@ Library         JSONSchemaLibrary
 Library         OperatingSystem
 Library         Crypto.py
 Resource        APIHelper.robot
+Resource        ../data/Const.robot
 Variables       ../data/Env.py
 
 
@@ -100,3 +101,46 @@ Get Authentication Token
     ...    ${encryptionKey}
     ${token}=    Get Access Token    ${session}    ${deviceID}    ${refreshToken}    ${env}    ${origin}
     RETURN    ${token}
+
+Get Token Trading User
+    [Documentation]    Get token for trading user
+    ${token}=    Get Authentication Token
+    ...    ${urlLogin}
+    ...    ${username}
+    ...    ${password}
+    ...    ${origin}
+    ...    ${version}
+    ...    ${environment}
+    RETURN    ${token}
+
+Get Token Admin Portal
+    [Documentation]    Get token for admin portal
+    ${token}=    Get Authentication Token
+    ...    ${urlLogin}
+    ...    ${username}
+    ...    ${password}
+    ...    ${originAdminPortal}
+    ...    ${version}
+    ...    ${environment}
+    RETURN    ${token}
+
+Update User Type
+    [Documentation]    etail, advisor, operation
+    ...    user: autotest@equix.com.au
+    [Arguments]    ${user_id}    ${user_type}    ${token}
+    Set Auth Token    ${token}
+    ${data}=    Create Dictionary    user_type=${user_type}
+    ${body}=    Create Dictionary    data=${data}
+    ${response}=    Send PUT Request    /user/user-details/${user_id}    ${body}
+    RETURN    ${response}
+
+Update User Status
+    [Documentation]    2: Active, 5: security block, 4: admin block
+    ...    user: autotest@equix.com.au
+    [Arguments]    ${user_id}    ${user_status}    ${token}
+    Set Auth Token    ${token}
+    ${user_status_int}=    Convert To Integer    ${user_status}
+    ${data}=    Create Dictionary    status=${user_status_int}
+    ${body}=    Create Dictionary    data=${data}
+    ${response}=    Send PUT Request    /user/user-details/${user_id}    ${body}
+    RETURN    ${response}

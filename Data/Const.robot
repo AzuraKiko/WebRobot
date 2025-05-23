@@ -30,5 +30,5 @@ ${exchangeASX}                  ASX
 ${session_name}                 mysession1
 
 # API
-# ${urlLogin}    https://dev2-retail-api.equix.app
-${urlLogin}                     https://equix-uat-retail-api.equix.app
+${urlLogin}                     https://dev2-retail-api.equix.app
+# ${urlLogin}                     https://equix-uat-retail-api.equix.app

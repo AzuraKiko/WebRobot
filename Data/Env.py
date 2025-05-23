@@ -1,5 +1,5 @@
 WL = "EQ"
-ENV = "UAT"  # DEV, UAT, PROD
+ENV = "DEV"  # DEV, UAT, PROD
 
 configs = {
     "EQ_DEV": {
@@ -8,7 +8,10 @@ configs = {
         "urlPortal": "https://portal-equix-dev2.equix.app/login",
         "version": "v1",
         "username": "huyen.tran@equix.com.au",
-        "password": "Cgsi#12345",
+        "password": "Cgsi#1234",
+        "other_username": "yen.bui@novus-fintech.com",
+        "other_password": "Abc@12345",
+        "other_userID": "eq1722918945218",
         "pin": "111111",
         "origin": "https://dev2.equix.app",
         "originAdminPortal": "https://portal-equix-dev2.equix.app",
@@ -16,12 +19,15 @@ configs = {
         "userID": "eq1746774775099",
     },
     "EQ_UAT": {
-        "apiUrl": "https://uat-operator-api.equix.app",
+        "apiUrl": "https://equix-uat-operator-api.equix.app",
         "url": "https://uat.equix.app",
         "urlPortal": "https://portal-equix-uat.equix.app/login",
         "version": "v1",
         "username": "huyen.tran.eq@equix.com.au",
         "password": "Cgsi#12345",
+        "other_username": "minh.eq@equix.com.au",
+        "other_password": "Abc123456@",
+        "other_userID": "eq1728980031005",
         "pin": "111111",
         "origin": "https://uat.equix.app",
         "originAdminPortal": "https://portal-equix-uat.equix.app",
@@ -84,6 +90,9 @@ URL = config["url"]
 URL_ADMIN_PORTAL = config["urlPortal"]
 username = config["username"]
 password = config["password"]
+other_username = config["other_username"]
+other_password = config["other_password"]
+other_userID = config["other_userID"]
 apiUrl = config["apiUrl"]
 origin = config["origin"]
 version = config["version"]

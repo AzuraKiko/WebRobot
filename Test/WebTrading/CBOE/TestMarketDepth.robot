@@ -25,13 +25,7 @@ Market Depth Delay Last Price
     Sleep    3s
 
     # Then get API data
-    ${token}=    Get Authentication Token
-    ...    ${urlLogin}
-    ...    ${username}
-    ...    ${password}
-    ...    ${origin}
-    ...    ${version}
-    ...    ${environment}
+    ${token}=    Get Token Trading User
     ${expect_trade_price}    ${expect_change_point}    ${expect_change_percent}=
     ...    Get Delayed Price Data    ${exchangeASX}    ${symbol}    ${token}
 
@@ -52,13 +46,8 @@ Market Depth Delay Last Price
 Market Depth No Access
     [Documentation]    Verify market depth behavior when user has no access
     [Tags]    no_access    market_depth
-    ${token}=    Get Authentication Token
-    ...    ${apiUrl}
-    ...    ${username}
-    ...    ${password}
-    ...    ${originAdminPortal}
-    ...    ${version}
-    ...    ${environment}
+    ${token}=    Get Token Admin Portal
+    Create API Session    ${apiUrl}    ${version}
     Update User Market Data    ${userID}    0    0    ${token}
     Login And Close All Tabs    ${username}    ${password}
     Open Market Depth
@@ -97,28 +86,35 @@ Market Depth Sort Bid/Ask
     Log    ${line}
     Should Be True    ${line}<=10    Số dòng phải nhỏ hơn hoặc bằng 10!
 
-    ${token}=    Get Authentication Token
-    ...    ${urlLogin}
-    ...    ${username}
-    ...    ${password}
-    ...    ${origin}
-    ...    ${version}
-    ...    ${environment}
-
+    ${token}=    Get Token Trading User
     Set Auth Token    ${token}
     ${json_response}=    Get API Data
     ...    /feed-snapshot-aio/price/${exchangeASX}/${symbol}
-    ${has_depth}=    Evaluate    'depth' in ${json_response}
+    ${has_depth}=    Evaluate    'depth' in ${json_response[0]}
     IF    ${has_depth}
         ${bids}=    Get From Dictionary    ${json_response[0]['depth']}    bid
         ${asks}=    Get From Dictionary    ${json_response[0]['depth']}    ask
         IF    ${bids}!= {}
             ${sortBid}=    Is Price Decreasing    ${bids}
-            Should Be True    ${sortBid}    Bids are not in decreasing order
+            ${total_bid_size}=    Calculate Total Depth    ${bids}
+            ${total_bid_size_api}=    Get From Dictionary    ${json_response[0]['depth']}    total_bid_size
+            Run Keyword And Continue On Failure    Should Be True    ${sortBid}    Bids are not in decreasing order
+            Run Keyword And Continue On Failure
+            ...    Compare Float Values
+            ...    ${total_bid_size}
+            ...    ${total_bid_size_api}
+            ...    msg=Total bid size is not equal
         END
         IF    ${asks}!= {}
             ${sortAsk}=    Is Price Increasing    ${asks}
-            Should Be True    ${sortAsk}    Asks are not in increasing order
+            ${total_ask_size}=    Calculate Total Depth    ${asks}
+            ${total_ask_size_api}=    Get From Dictionary    ${json_response[0]['depth']}    total_ask_size
+            Run Keyword And Continue On Failure    Should Be True    ${sortAsk}    Asks are not in increasing order
+            Run Keyword And Continue On Failure
+            ...    Compare Float Values
+            ...    ${total_ask_size}
+            ...    ${total_ask_size_api}
+            ...    msg=Total ask size is not equal
         END
     ELSE
         Log    Depth is empty
@@ -136,4 +132,4 @@ Market Depth Invalid Symbol
     Should Be Equal    ${error_text}    No Data    msg=Invalid symbol error message mismatch
 
 Handle Image
-    Extract Text To Csv    ${EXECDIR}/Data/ProcessDepth.png    ${EXECDIR}/Data/MarketDepth.csv
+    Extract Text To Csv    ${EXECDIR}/Data/ProcessDepth.png    ${EXECDIR}/Data/MarketDepth1.csv

@@ -102,14 +102,40 @@ Send PUT Request
     [Documentation]    Thực hiện PUT request
     ...    endpoint: URL endpoint
     ...    data: Request body
+    ...    headers: Custom headers
+    ...    params: Query parameters
     ...    expected_status: Status code mong đợi
-    [Arguments]    ${endpoint}    ${data}=${EMPTY}    ${expected_status}=200
-    ${response}=    PUT On Session
-    ...    ${API_SESSION}
+    [Arguments]
     ...    ${endpoint}
-    ...    json=${data}
-    ...    headers=${AUTH_HEADERS}
-    ...    expected_status=${expected_status}
+    ...    ${data}=${EMPTY}
+    ...    ${headers}=${EMPTY}
+    ...    ${params}=${EMPTY}
+    ...    ${expected_status}=200
+
+    # Tạo merged_headers từ AUTH_HEADERS
+    &{merged_headers}=    Copy Dictionary    ${AUTH_HEADERS}
+
+    # Nếu có custom headers, thêm vào merged_headers
+    IF    "${headers}" != "${EMPTY}"
+        Set To Dictionary    ${merged_headers}    &{headers}
+    END
+
+    IF    "${data}" != "${EMPTY}"
+        ${response}=    PUT On Session
+        ...    ${API_SESSION}
+        ...    ${endpoint}
+        ...    json=${data}
+        ...    params=${params}
+        ...    headers=${merged_headers}
+        ...    expected_status=${expected_status}
+    ELSE
+        ${response}=    PUT On Session
+        ...    ${API_SESSION}
+        ...    ${endpoint}
+        ...    params=${params}
+        ...    headers=${merged_headers}
+        ...    expected_status=${expected_status}
+    END
     Log    PUT Request: ${endpoint}    level=INFO
     Log    Response: ${response.text}    level=DEBUG
     RETURN    ${response}
