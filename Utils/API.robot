@@ -7,6 +7,8 @@ Library         Collections
 Library         JSONSchemaLibrary
 Library         OperatingSystem
 Library         Crypto.py
+Library         FakerLibrary
+Resource        RandomData.robot
 Resource        APIHelper.robot
 Resource        ../data/Const.robot
 Variables       ../data/Env.py
@@ -144,3 +146,39 @@ Update User Status
     ${body}=    Create Dictionary    data=${data}
     ${response}=    Send PUT Request    /user/user-details/${user_id}    ${body}
     RETURN    ${response}
+
+Create User
+    [Documentation]    Create user
+    [Arguments]    ${token}
+    ${full_name}=    FakerLibrary.Name
+    ${user_login_id}=    Generate Random Email
+    ${password}=    Set Variable    Cgsi#1234
+    ${role_group}=    Set Variable    RG5
+    ${email_template}=    Set Variable    E1
+    ${status}=    Convert To Integer    2
+    ${note}=    Set Variable    ${EMPTY}
+    ${access_method}=    Convert To Integer    0
+    ${user_type}=    Set Variable    operation
+    ${user_group}=    Convert To Integer    3
+    ${send_password}=    Convert To Integer    1
+    ${change_password}=    Convert To Integer    1
+    ${member_infor}=    Set Variable    none
+    Set Auth Token    ${token}
+    ${data}=    Create Dictionary
+    ...    full_name=${full_name}
+    ...    user_login_id=${user_login_id}
+    ...    email=${user_login_id}
+    ...    password=${password}
+    ...    user_type=${user_type}
+    ...    role_group=${role_group}
+    ...    email_template=${email_template}
+    ...    status=${status}
+    ...    note=${note}
+    ...    access_method=${access_method}
+    ...    user_group=${user_group}
+    ...    send_password=${send_password}
+    ...    change_password=${change_password}
+    ...    member_infor=${member_infor}
+    ${body}=    Create Dictionary    data=${data}
+    ${response}=    Send POST Request    /user/user-details    ${body}
+    RETURN    ${response}    ${user_login_id}    ${password}

@@ -232,13 +232,6 @@ Verify Text Placeholder
     ${textActual}=    Strip String    ${textActual}
     Should Be Equal    ${textExpected}    ${textActual}
 
-Verify Message
-    [Documentation]    Verifies text content of an element
-    [Arguments]    ${locator}    ${text_Expected}
-    Wait Until Element Is Visible    ${locator}    ${time}
-    ${text_Actual}=    Get Text    ${locator}
-    Should Be Equal    ${text_Expected}    ${text_Actual}
-
 Verify Button Disable
     [Documentation]    Verifies if a button is disabled
     [Arguments]    ${button}
@@ -269,6 +262,15 @@ Verify Element Display
     Wait Until Element Is Visible    ${locator}    ${time}
     Element Should Be Visible    ${locator}
 
+Verify Flash Error Message
+    [Arguments]    ${locator}    ${text_Expected}
+    Wait Until Keyword Succeeds    ${time}    0.1s    Verify Error Message Once    ${text_Expected}    ${locator}
+
+Verify Error Message Once
+    [Arguments]    ${text_Expected}    ${locator}
+    ${text_Actual}=    Get Text    ${locator}
+    Should Be Equal    ${text_Expected}    ${text_Actual}
+
 Verify Element Not Display
     [Documentation]    Verifies if an element is not displayed
     [Arguments]    ${locator}
@@ -279,6 +281,32 @@ Verify Message Confirm Bound
     [Documentation]    Verifies confirmation popup message
     [Arguments]    ${text_Expected}
     Verify Message    ${popup_Confirm_Bound}    ${text_Expected}
+
+Verify button disable in time
+    [Documentation]    Verifies button is disabled with a specific timeout
+    [Arguments]    ${button}    ${time_block}
+    Verify button disable/enable by JS    ${button}    not-allowed
+    ${actual_time}=    Get Text    ${button}
+    Should Be Equal    ${time_block}    ${actual_time}
+    Wait button enable by JS    ${button}
+
+Verify message display slowly
+    [Arguments]    ${locator}    ${text_Expected}
+    Wait Until Element Is Visible    ${locator}
+    FOR    ${i}    IN RANGE    1000
+        ${text_Actual}=    Get Element Text By JS    ${locator}
+        IF    '${text_Actual}'=='${text_Expected}'    BREAK
+    END
+    Should Be Equal    ${text_Actual}    ${text_Expected}
+
+Verify Message
+    [Documentation]    Verifies text content of an element
+    [Arguments]    ${locator}    ${text_Expected}
+    Wait Until Element Is Visible    ${locator}    ${time}
+    ${text_Actual}=    Get Element Text By JS    ${locator}
+    ${text_Actual}=    Strip String    ${text_Actual}
+    ${text_Expected}=    Strip String    ${text_Expected}
+    Should Be Equal    ${text_Expected}    ${text_Actual}
 
 # ===== Scroll Keywords =====
 
@@ -330,13 +358,29 @@ Wait Button Enable By JS
         Sleep    1s
     END
 
+Wait Button Enable By Text
+    [Documentation]    Waits for a button to become enabled
+    [Arguments]    ${locator}    ${text}
+    Wait Until Element Is Visible    ${locator}
+    FOR    ${i}    IN RANGE    1000
+        ${time_Actual}=    Get Element Text By JS    ${locator}
+        IF    '${time_Actual}'=='${text}'    BREAK
+        Sleep    2s
+    END
+    Wait button enable by JS    ${locator}
+
 Wait Button Disable By JS
     [Documentation]    Waits for a button to become disabled
     [Arguments]    ${button}
     FOR    ${i}    IN RANGE    1000
         ${value}=    Execute Javascript
-        ...    return window.getComputedStyle(document.evaluate(`${button}`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,null).getPropertyValue("cursor");
+        ...    const element = document.evaluate(`${button}`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        ...    if (!element) {
+        ...    return 'element-not-found';
+        ...    }
+        ...    return window.getComputedStyle(element, null).getPropertyValue("cursor");
         IF    '${value}'=='not-allowed'    BREAK
+        IF    '${value}'=='element-not-found'    Sleep    1s    CONTINUE
         Sleep    1s
     END
 

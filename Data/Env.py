@@ -1,5 +1,5 @@
 WL = "EQ"
-ENV = "DEV"  # DEV, UAT, PROD
+ENV = "UAT"  # DEV, UAT, PROD
 
 configs = {
     "EQ_DEV": {

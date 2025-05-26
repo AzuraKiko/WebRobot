@@ -8,7 +8,6 @@ robotframework-requests==0.9.7
 robotframework-jsonschemalibrary==1.0
 pycryptodomex~=3.22.0
 crypto==1.4.1
-browser==19.3.1
 pytesseract==0.3.13
 numpy~=2.2.5
 robotframework-tidy==4.16.0
@@ -17,3 +16,5 @@ opencv-python~=4.11.0.86
 requests~=2.32.3
 pillow~=11.2.1
 pandas~=2.2.3
+robotframework-faker==5.0.0
+robotframework-browser==19.5.1
