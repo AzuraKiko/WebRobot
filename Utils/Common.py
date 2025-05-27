@@ -26,6 +26,48 @@ def generate_random_username_with_timestamp() -> str:
     return f"nga_{timestamp}_{random_part}"
 
 
+def generate_random_password_with_length(length: int = 8) -> str:
+    """
+    Generate a random password with specified length.
+
+    Args:
+        length (int): Password length, must be between 8-255 characters. Default is 12.
+
+    Returns:
+        str: Generated random password containing at least one character from each type:
+             lowercase, uppercase, numbers, and special characters.
+
+    Raises:
+        ValueError: If length is not between 8-255 characters.
+    """
+    # Validate input length
+    if not (8 <= length <= 255):
+        raise ValueError("Password length must be between 8-255 characters")
+
+    # Character sets
+    lower = string.ascii_lowercase
+    upper = string.ascii_uppercase
+    numbers = string.digits
+    special = "!@#$%^&*()_+-=[]{}|;:,.<>?"
+
+    # Ensure at least one character from each type
+    password = [
+        random.choice(lower),
+        random.choice(upper),
+        random.choice(numbers),
+        random.choice(special)
+    ]
+
+    # Add random characters for the remaining length
+    all_chars = lower + upper + numbers + special
+    for _ in range(length - 4):
+        password.append(random.choice(all_chars))
+
+    # Shuffle and return
+    random.shuffle(password)
+    return "".join(password)
+
+
 def set_input_text_to_null() -> str:
     """Return empty string."""
     return ""

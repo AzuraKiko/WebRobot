@@ -280,7 +280,11 @@ Verify Element Not Display
 Verify Message Confirm Bound
     [Documentation]    Verifies confirmation popup message
     [Arguments]    ${text_Expected}
-    Verify Message    ${popup_Confirm_Bound}    ${text_Expected}
+    Wait Until Element Is Visible    ${popup_Confirm_Bound}    ${time}
+    ${text_Actual}=    Get Text    ${popup_Confirm_Bound}
+    ${text_Actual}=    Strip String    ${text_Actual}
+    ${text_Expected}=    Strip String    ${text_Expected}
+    Should Be Equal    ${text_Expected}    ${text_Actual}
 
 Verify button disable in time
     [Documentation]    Verifies button is disabled with a specific timeout
@@ -306,6 +310,18 @@ Verify Message
     ${text_Actual}=    Get Element Text By JS    ${locator}
     ${text_Actual}=    Strip String    ${text_Actual}
     ${text_Expected}=    Strip String    ${text_Expected}
+    Should Be Equal    ${text_Expected}    ${text_Actual}
+
+Verify Textbox Value Should Be
+    [Arguments]    ${locator}    ${expected_value}
+    Wait Until Element Is Visible    ${locator}
+    ${actual_value}=    SeleniumLibrary.Get Element Attribute    ${locator}    value
+    Should Be Equal    ${expected_value}    ${actual_value}
+
+Verify Textbox Allow Characters
+    [Arguments]    ${locator}    ${text_Expected}
+    Wait Until Element Is Visible    ${locator}
+    ${text_Actual}=    SeleniumLibrary.Get Element Attribute    ${locator}    pattern
     Should Be Equal    ${text_Expected}    ${text_Actual}
 
 # ===== Scroll Keywords =====
@@ -399,10 +415,11 @@ Capture Screenshot With Index
 # ===== New Utility Keywords =====
 
 Get Element Text By JS
-    [Documentation]    Gets text content using JavaScript
+    [Documentation]    Gets text content using JavaScript with null check
     [Arguments]    ${locator}
     ${text}=    Execute Javascript
-    ...    return document.evaluate(`${locator}`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerText;
+    ...    const node = document.evaluate(`${locator}`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    ...    return node ? node.innerText : null;
     RETURN    ${text}
 
 Get Element Count
