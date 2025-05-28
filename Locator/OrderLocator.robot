@@ -31,7 +31,7 @@ ${clickSearch_option}               //span[@title='${option}']
 
 # Order Type Selection Locators
 ${clickSelectOderType}              //div[normalize-space()='order type']/following-sibling::div
-${clickOrderType_LIMIT}             //div[@id="dropDownContent"]//label[text()='limit']
+${clickOrderType_Limit}             //div[@id="dropDownContent"]//label[text()='limit']
 ${clickOrderType_MarketToLimit}     //div[@id="dropDownContent"]//label[text()='market to limit']
 ${clickOrderTypeSt_StopLimit}       //div[@id="dropDownContent"]//label[text()='stop limit']
 

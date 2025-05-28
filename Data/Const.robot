@@ -2,18 +2,28 @@
 # Message
 ${ExpectedWarningMessage}       Incorrect Password or User Login. Please make sure your details are correct and try again
 ${ExpectedModalText}            Enter Your PIN
+# Side
+${BUY}                          BUY
+${SELL}                         SELL
 
-# Label
-${equity}                       ANZ.ASX
-${etf}                          AAA.ASX
-${mf}                           MGOC.ASX
-${warrant}                      WAFKOA.ASX
-${option}                       ABXO.ASX
+# Order Type
+${LIMIT}                        Limit
+${MARKETTOLIMIT}                Market to Limit
+${STOPLIMIT}                    Stop Limit
+
+# Duration
 ${GTC}                          Good Till Cancelled
 ${GTD}                          Good Till
 ${FOK}                          Fill or Kill
 ${IOC}                          Immediate or Cancel
 ${DO}                           Day Only
+
+# Destinations
+${BESTMKT}                      BESTMARKET
+${ASX}                          ASX
+${ASXCP}                        ASXCP
+${CXA}                          CXA
+${qCXA}                         qCXA
 
 # Price
 ${quantity}                     2
