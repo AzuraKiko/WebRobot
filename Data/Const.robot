@@ -21,7 +21,8 @@ ${price}                        2
 ${trigger_price}                2
 
 # ${Browser}    headlesschrome
-${Browser}                      edge
+# ${Browser}    edge
+${Browser}                      chrome
 
 # Symbol
 ${symbol}                       BHP

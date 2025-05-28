@@ -180,5 +180,7 @@ Create User
     ...    change_password=${change_password}
     ...    member_infor=${member_infor}
     ${body}=    Create Dictionary    data=${data}
-    ${response}=    Send POST Request    /user/user-details    ${body}
-    RETURN    ${response}    ${user_login_id}    ${password}
+    ${header}=    Create Dictionary    Environment=${environment}    origin=${originAdminPortal}
+    ${response}=    Send POST Request    /user/user-details    ${body}    ${header}
+    ${user_id}=    Get From Dictionary    ${response.json()}    user_id
+    RETURN    ${response}    ${user_login_id}    ${password}    ${user_id}

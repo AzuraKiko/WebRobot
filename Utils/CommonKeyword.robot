@@ -13,7 +13,7 @@ ${BackSpace}                    BACKSPACE
 ${CtrA}                         CTRL+A
 ${Delete}                       DELETE
 ${TC_INDEX}                     0
-${popup_Confirm_Bound}          //div[contains(@class, 'confirmBound')]
+${popup_Confirm_Bound}          //div[contains(@class, 'confirmBound')]//div
 ${popup_Confirm_Bound_OK}       //div[contains(@class, "confirmBtnRoot")]//div[contains(@class, "btn") and .//span[normalize-space(text())="ok"]]
 
 
@@ -106,7 +106,7 @@ Clear Text To Element
     [Arguments]    ${locator}
     Wait Until Element Is Visible    ${locator}    ${time}
     Wait Until Element Is Enabled    ${locator}    ${time}
-    Click To Element    ${locator}
+    Set Focus To Element    ${locator}
     Clear Element Text    ${locator}
 
 Clear Text By Key BackSpace
