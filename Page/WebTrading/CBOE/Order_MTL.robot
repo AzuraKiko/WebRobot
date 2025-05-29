@@ -1,31 +1,51 @@
 *** Settings ***
-Library     SeleniumLibrary
-Resource    ../../../Locator/OrderLocator.robot
-Resource    ../../../Utils/CustomKeys.robot
+Documentation       Keywords for Market To Limit (MTL) order operations
+
+Library             SeleniumLibrary
+Resource            ../../../Locator/OrderLocator.robot
+Resource            ../../../Utils/CustomKeys.robot
+
+
 *** Variables ***
-${buttonBuy}        //div[text()='buy']
+${buttonBuy}    //div[text()='buy']
+
+
 *** Keywords ***
 Enter Button Buy
-    Click To Element        ${buttonBuy}
+    [Documentation]    Clicks the Buy button to start a buy order
+    Click To Element    ${buttonBuy}
+
 Input symbol
-    [Arguments]      ${symbol}          ${company}
-    Input Text To Element                      ${inputSearch_Symbol}   ${symbol}
-    Click To Element                           ${suggestSymbol}
-    Wait Until Page Contains                   ${company}
+    [Documentation]    Inputs a trading symbol and verifies company name
+    [Arguments]    ${symbol}    ${company}
+    Input Text To Element    ${inputSearch_Symbol}    ${symbol}
+    Click To Element    ${suggestSymbol}
+    Wait Until Page Contains    ${company}
+
 Click destination
-    Click To Element            ${clickDestination}
+    [Documentation]    Clicks the destination dropdown
+    Click To Element    ${clickDestination}
+
 Verify destination - BESTMKT enable
-    Verify element enable       ${clickdestination_BESTMKT}         default
+    [Documentation]    Verifies if BESTMKT destination is enabled
+    Verify element enable    ${clickdestination_BESTMKT}    default
 
 Verify destination CXA enable
-    Verify element enable       ${clickdestination_CXA}             default
+    [Documentation]    Verifies if CXA destination is enabled
+    Verify element enable    ${clickdestination_CXA}    default
 
 Verify destination qCXA enable
-    Verify element enable       ${clickdestination_qCXA}            default
+    [Documentation]    Verifies if qCXA destination is enabled
+    Verify element enable    ${clickdestination_qCXA}    default
+
 Verify destination ASX enable
-    Verify element enable       ${clickdestination_ASX}             default
+    [Documentation]    Verifies if ASX destination is enabled
+    Verify element enable    ${clickdestination_ASX}    default
+
 Verify destination qASX enable
-    Verify element enable       ${clickdestination_qASX}             default
+    [Documentation]    Verifies if qASX destination is enabled
+    Verify element enable    ${clickdestination_qASX}    default
 
 Verify destination AXW enable
-    Verify element enable       ${clickdestination_AXW}             default
+    [Documentation]    Verifies if AXW destination is enabled
+    Verify element enable    ${clickdestination_AXW}    default

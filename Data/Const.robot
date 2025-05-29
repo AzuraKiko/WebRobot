@@ -27,8 +27,9 @@ ${qCXA}                         qCXA
 
 # Price
 ${quantity}                     2
-${price}                        2
+${price}                        38.49
 ${trigger_price}                2
+${max_qty}                      100
 
 # ${Browser}    headlesschrome
 # ${Browser}    edge

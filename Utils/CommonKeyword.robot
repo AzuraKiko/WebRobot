@@ -174,6 +174,18 @@ Select Fixed Value From Dropdown
     Click Element    ${value_xpath}
     Sleep    0.5s
 
+Select Autocomplete Dropdown
+    [Documentation]    Selects a value from dropdown by typing in the search field
+    [Arguments]    ${dropdown_xpath}    ${value_xpath}    ${text}
+    Wait Until Element Is Visible    ${dropdown_xpath}    ${time}
+    Scroll To Element    ${dropdown_xpath}
+    Press Keys    ${dropdown_xpath}    ${CtrA}+${BackSpace}
+    Input Text To Element    ${dropdown_xpath}    ${text}
+    Wait Until Element Is Visible    ${value_xpath}    ${time}
+    Sleep    0.5s
+    Click Element    ${value_xpath}
+    Sleep    0.5s
+
 Select Value From Dropdown
     [Documentation]    Selects a value from dropdown by cycling through options
     [Arguments]    ${dropdown_xpath}    ${value_xpath}    ${expected_value}

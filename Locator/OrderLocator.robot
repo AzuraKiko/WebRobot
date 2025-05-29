@@ -1,9 +1,9 @@
 *** Variables ***
 # Account Variables
-${account}                          108723
+${account}                          100025
 
 # Symbol Variables
-${equity}                           ANZ.ASX
+${equity}                           BHP.ASX
 ${etf}                              AAA.ASX
 ${mf}                               MGOC.ASX
 ${warrant}                          WAFKOA.ASX
@@ -86,7 +86,7 @@ ${accountID}                        (//div[text()='account id'])[1]/following-si
 ${side}                             (//div[text()='side'])[1]/following-sibling::div
 ${orderType}                        (//div[text()='order type'])[1]/following-sibling::div
 ${security}                         (//div[text()='security'])[1]/following-sibling::div
-${quantity}                         (//div[text()='quantity'])[1]/following-sibling::div
+${qty}                              (//div[text()='quantity'])[1]/following-sibling::div
 ${limitPrice}                       (//div[text()='limit price'])[1]/following-sibling::div
 ${duration}                         (//div[text()='duration'])[1]/following-sibling::div
 ${destination}                      (//div[text()='destination'])[1]/following-sibling::div

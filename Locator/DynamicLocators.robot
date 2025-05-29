@@ -6,9 +6,9 @@ Library     String
 *** Keywords ***
 Create Dynamic Locator
     [Documentation]    Creates a dynamic locator by replacing placeholders with parameters
-    ...    Example:
-    ...    | ${button_locator}= | Create Dynamic Locator | //button[contains(text(), "{0}")] | Save |
-    ...    | ${cell_locator}= | Create Dynamic Locator | //table[@id="{0}"]//tr[{1}]/td[{2}] | userTable | 3 | 2 |
+    # ...    Example:
+    # ...    | ${button_locator}= | Create Dynamic Locator | //button[contains(text(), "{0}")] | Save |
+    # ...    | ${cell_locator}= | Create Dynamic Locator | //table[@id="{0}"]//tr[{1}]/td[{2}] | userTable | 3 | 2 |
     [Arguments]    ${base_locator}    @{params}
 
     ${result}=    Set Variable    ${base_locator}
