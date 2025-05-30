@@ -1,6 +1,8 @@
 *** Variables ***
 # Account Variables
-${account}                          100025
+# DEV: 103497, 104179, 104293, 104410, 104638, 104814, 104831, 104849, 104886, 105628, 106133, 106334, 106363, 106376, 106462, 108064, 108723, 108743
+# UAT: 108892, 109245, 109341 109817 111321 111325 111876 112000 112021 112193 113313 113557 113558 113614 115136 115296 115498 500983 500984
+${account}                          108892
 
 # Symbol Variables
 ${equity}                           BHP.ASX
@@ -42,21 +44,21 @@ ${inputTriggerPrice}                //div[contains(text(),'trigger price')]/foll
 
 # Duration Selection Locators
 ${clickSelectDuration}              //div[normalize-space()='duration']/following-sibling::div
-${clickSelectDuration_DayOnly}      //*[@id="dropDownContent"]//label[text()='Day Only']
-${clickSelectDuration_GTC}          //*[@id="dropDownContent"]//label[text()='Good Till Cancelled']
-${clickSelectDuration_GTD}          //*[@id="dropDownContent"]//label[text()='Good Till Date']
-${clickSelectDuration_FOK}          //*[@id="dropDownContent"]//label[text()='Fill or Kill']
-${clickSelectDuration_IOC}          //*[@id="dropDownContent"]//label[text()='Immediate or Cancel']
+${clickSelectDuration_DayOnly}      //label[text()='Day Only']/ancestor::div[contains(@id,"itemDropDown")]
+${clickSelectDuration_GTC}          //label[text()='Good Till Cancelled']/ancestor::div[contains(@id,"itemDropDown")]
+${clickSelectDuration_GTD}          //label[text()='Good Till Date']/ancestor::div[contains(@id,"itemDropDown")]
+${clickSelectDuration_FOK}          //label[text()='Fill or Kill']/ancestor::div[contains(@id,"itemDropDown")]
+${clickSelectDuration_IOC}          //label[text()='Immediate or Cancel']/ancestor::div[contains(@id,"itemDropDown")]
 
 # Destination Selection Locators
 ${clickDestination}                 //div[text()='destination']/following-sibling::div
-${clickdestination_BESTMKT}         //*[@id="dropDownContent"]//label[text()='BESTMKT']
-${clickdestination_ASX}             //*[@id="dropDownContent"]//label[text()='ASX']
-${clickdestination_ASXCP}           //*[@id="dropDownContent"]//label[text()='ASXCP']
-${clickdestination_qASX}            //*[@id="dropDownContent"]//label[text()='qASX']
-${clickdestination_CXA}             //*[@id="dropDownContent"]//label[text()='CXA']
-${clickdestination_qCXA}            //*[@id="dropDownContent"]//label[text()='qCXA']
-${clickdestination_AXW}             //*[@id="dropDownContent"]//label[text()='AXW']
+${clickdestination_BESTMKT}         //label[text()='BESTMKT']/ancestor::div[contains(@id,"itemDropDown")]
+${clickdestination_ASX}             //label[text()='ASX']/ancestor::div[contains(@id,"itemDropDown")]
+${clickdestination_ASXCP}           //label[text()='ASXCP']/ancestor::div[contains(@id,"itemDropDown")]
+${clickdestination_qASX}            //label[text()='qASX']/ancestor::div[contains(@id,"itemDropDown")]
+${clickdestination_CXA}             //label[text()='CXA']/ancestor::div[contains(@id,"itemDropDown")]
+${clickdestination_qCXA}            //label[text()='qCXA']/ancestor::div[contains(@id,"itemDropDown")]
+${clickdestination_AXW}             //label[text()='AXW']/ancestor::div[contains(@id,"itemDropDown")]
 
 # Order Action Button Locators
 ${btnReviewOrder}                   //div[contains(text(),'review order')][@class='text-uppercase ']
@@ -86,16 +88,18 @@ ${accountID}                        (//div[text()='account id'])[1]/following-si
 ${side}                             (//div[text()='side'])[1]/following-sibling::div
 ${orderType}                        (//div[text()='order type'])[1]/following-sibling::div
 ${security}                         (//div[text()='security'])[1]/following-sibling::div
+${symbol_locator}                   (//div[text()='symbol'])[1]/following-sibling::div
 ${qty}                              (//div[text()='quantity'])[1]/following-sibling::div
 ${limitPrice}                       (//div[text()='limit price'])[1]/following-sibling::div
 ${duration}                         (//div[text()='duration'])[1]/following-sibling::div
 ${destination}                      (//div[text()='destination'])[1]/following-sibling::div
 ${orderAmount}                      (//div[text()='order amount'])[1]/following-sibling::div
 ${estimateFee}                      (//div[text()='estimated fees'])[1]/following-sibling::div
-${estimateTotal}                    (//div[text()='estimated total'])[1]/parent::div/following-sibling::div
+${estimateTotal}                    (//div[text()='CHANGE_ME'])[1]/parent::div/following-sibling::div
 ${errorReviewMessage}               //div[@class='errorOrder size--3']
 
 # Order Detail Modal Locators
+${accountOfDetail}                  //div[contains(text(),'account')]/following-sibling::div[contains(@class,'showTitle')]
 ${quantityDetail}                   //div[contains(text(),'quantity')]/following-sibling::div
 ${filledDtail}                      //div[text()='filled']/following-sibling::div
 ${orderTypeDetail}                  //div[text()='order type']/following-sibling::div
@@ -108,5 +112,7 @@ ${productDetail}                    //div[text()='product']/following-sibling::d
 ${codeDetail}                       //div[text()='code']/following-sibling::div
 
 # Trading Balance Locators
-${tradingBalance}                   //div[text()='trading balance']/following-sibling::div//span
+${tradingBalance}                   //div[text()='CHANGE_ME']/following-sibling::div//span
 ${clickDateTimePicker}              //div[text()='duration']/following-sibling::div//div[@class='react-datepicker__input-container']
+
+${tradingBalanceStep1}              //div[text()='CHANGE_ME']/following-sibling::span

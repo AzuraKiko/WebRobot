@@ -35,14 +35,6 @@ Click To Element On Widget
     Wait Until Element Is Enabled    ${element_xpath}    ${time}
     Click Element    ${element_xpath}
 
-Click To Coordinate
-    [Documentation]    Clicks at specific coordinates on an element
-    [Arguments]    ${locator}    ${x}    ${y}
-    Wait Until Element Is Visible    ${locator}    ${time}
-    Wait Until Element Is Enabled    ${locator}    ${time}
-    Hover To Element    ${locator}
-    Click Element At Coordinates    ${locator}    ${x}    ${y}
-
 Click Element If Visible
     [Documentation]    Clicks first element if visible, otherwise clicks second element
     [Arguments]    ${locator1}    ${locator2}
@@ -464,3 +456,141 @@ Get Active Widget By Name
     ...    //li[contains(@class, "lm_tab") and contains(@class, "lm_active") and contains(normalize-space(), "${name_tab}")]
     ${panel_xpath}=    Set Variable    ${tab_xpath}/ancestor::div[@class="lm_item lm_stack"]
     RETURN    ${panel_xpath}
+
+# ===== Coordinates =====
+
+Debug Canvas Coordinates
+    [Documentation]    Debug to find correct coordinates
+    [Arguments]    ${locator}
+    Wait Until Element Is Visible    ${locator}    ${time}
+
+    # Log thông tin element
+    ${element_info}=    Execute JavaScript
+    ...    var element = document.evaluate("${locator}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    ...    var rect = element.getBoundingClientRect();
+    ...    return {
+    ...    'left': rect.left,
+    ...    'top': rect.top,
+    ...    'width': rect.width,
+    ...    'height': rect.height,
+    ...    'centerX': rect.left + rect.width/2,
+    ...    'centerY': rect.top + rect.height/2
+    ...    };
+
+    Log    Element info: ${element_info}
+
+    # Thử click ở nhiều vị trí khác nhau
+    Mouse Over    ${locator}
+    Click Element At Coordinates    ${locator}    100    50
+
+Get Element Center Coordinates
+    [Documentation]    Returns center coordinates of element
+    [Arguments]    ${locator}
+    ${coordinates}=    Execute JavaScript
+    ...    var element = document.evaluate("${locator}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    ...    var rect = element.getBoundingClientRect();
+    ...    return [rect.left + rect.width/2, rect.top + rect.height/2];
+    RETURN    ${coordinates}
+
+Click To Coordinate
+    [Documentation]    Clicks at specific coordinates on an element
+    [Arguments]    ${locator}    ${x}    ${y}
+    Wait Until Element Is Visible    ${locator}    ${time}
+    Wait Until Element Is Enabled    ${locator}    ${time}
+    Hover To Element    ${locator}
+    Click Element At Coordinates    ${locator}    ${x}    ${y}
+
+JavaScript Click At Coordinates
+    [Documentation]    Performs click using JavaScript
+    [Arguments]    ${locator}    ${x_offset}    ${y_offset}
+    Wait Until Element Is Visible    ${locator}    ${time}
+    Wait Until Element Is Enabled    ${locator}    ${time}
+    Hover To Element    ${locator}
+    Execute JavaScript
+    ...    var element = document.evaluate("${locator}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    ...    var event = new MouseEvent('click', {
+    ...    'view': window,
+    ...    'bubbles': true,
+    ...    'cancelable': true,
+    ...    'clientX': element.getBoundingClientRect().left + ${x_offset},
+    ...    'clientY': element.getBoundingClientRect().top + ${y_offset}
+    ...    });
+    ...    element.dispatchEvent(event);
+
+Double Click At Coordinates
+    [Documentation]    Simulates double click using two quick single clicks
+    [Arguments]    ${locator}    ${x}    ${y}
+    Click To Coordinate    ${locator}    ${x}    ${y}
+    Sleep    0.1s    # Khoảng cách ngắn giữa 2 click
+    Click Element At Coordinates    ${locator}    ${x}    ${y}
+
+JavaScript Double Click At Coordinates
+    [Documentation]    Performs double click using JavaScript
+    [Arguments]    ${locator}    ${x_offset}    ${y_offset}
+
+    Execute JavaScript
+    ...    var element = document.evaluate("${locator}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    ...    if (element) {
+    ...    var rect = element.getBoundingClientRect();
+    ...    var event = new MouseEvent('dblclick', {
+    ...    'view': window,
+    ...    'bubbles': true,
+    ...    'cancelable': true,
+    ...    'clientX': rect.left + ${x_offset},
+    ...    'clientY': rect.top + ${y_offset}
+    ...    });
+    ...    element.dispatchEvent(event);
+    ...    }
+
+Get Element Bounds
+    [Documentation]    Get element boundaries to check valid coordinates
+    [Arguments]    ${locator}
+
+    ${bounds}=    Execute JavaScript
+    ...    var element = document.evaluate("${locator}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    ...    if (element) {
+    ...    var rect = element.getBoundingClientRect();
+    ...    return {
+    ...    'width': rect.width,
+    ...    'height': rect.height,
+    ...    'left': rect.left,
+    ...    'top': rect.top,
+    ...    'right': rect.right,
+    ...    'bottom': rect.bottom
+    ...    };
+    ...    }
+    ...    return null;
+
+    Log    Element bounds: ${bounds}
+    RETURN    ${bounds}
+
+Click Element At Coordinates Safe
+    [Documentation]    Click with bounds checking
+    [Arguments]    ${locator}
+    Wait Until Element Is Visible    ${locator}    ${time}
+
+    # Kiểm tra kích thước element
+    ${bounds}=    Get Element Bounds    ${locator}
+    Log    Element width: ${bounds['width']}, height: ${bounds['height']}
+
+    # Sử dụng tọa độ an toàn (trong phạm vi element)
+    ${safe_x}=    Evaluate    min(100, ${bounds['width']} - 10)
+    ${safe_y}=    Evaluate    min(50, ${bounds['height']} - 10)
+
+    Mouse Over    ${locator}
+    Click Element At Coordinates    ${locator}    ${safe_x}    ${safe_y}
+
+Safe JavaScript Click
+    [Documentation]    Safe JavaScript click using percentage coordinates
+    [Arguments]    ${locator}    ${x_percent}=50    ${y_percent}=50
+    Execute JavaScript
+    ...    var element = document.evaluate("${locator}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; if (element) { var rect = element.getBoundingClientRect(); var clickX = rect.left + (rect.width * ${x_percent} / 100); var clickY = rect.top + (rect.height * ${y_percent} / 100); clickX = Math.max(0, Math.min(clickX, window.innerWidth)); clickY = Math.max(0, Math.min(clickY, window.innerHeight)); var event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true, clientX: clickX, clientY: clickY }); element.dispatchEvent(event); }
+
+Click Coordinates Safe
+    [Documentation]    Safe click using JavaScript
+    [Arguments]    ${locator}
+    Wait Until Element Is Visible    ${locator}    ${time}
+    Scroll Element Into View    ${locator}
+
+    # Click ở 80% width, 30% height của element
+    Safe JavaScript Click    ${locator}    80    30

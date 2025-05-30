@@ -7,9 +7,9 @@ ${BUY}                          BUY
 ${SELL}                         SELL
 
 # Order Type
-${LIMIT}                        Limit
-${MARKETTOLIMIT}                Market to Limit
-${STOPLIMIT}                    Stop Limit
+${LIMIT}                        LIMIT
+${MARKETTOLIMIT}                MARKET TO LIMIT
+${STOPLIMIT}                    STOP LIMIT
 
 # Duration
 ${GTC}                          Good Till Cancelled
@@ -24,6 +24,7 @@ ${ASX}                          ASX
 ${ASXCP}                        ASXCP
 ${CXA}                          CXA
 ${qCXA}                         qCXA
+${qASX}                         qASX
 
 # Price
 ${quantity}                     2
@@ -47,3 +48,4 @@ ${urlLogin}                     https://equix-uat-retail-api.equix.app
 
 # Icon
 ${icon_Loading}                 //img[@src="common/Spinner-white.svg"]
+${role_list}                    //div[@class="list "]//div[contains(@id,'itemDropDown')]
